@@ -7,6 +7,7 @@ CREATE TABLE `tblregistration` (
   `firstName` varchar(150) DEFAULT NULL,
   `lastName` varchar(150) DEFAULT NULL,
   `emailId` varchar(150) DEFAULT NULL,
+  `username` varchar(60) DEFAULT NULL,
   `mobileNumber` bigint(12) DEFAULT NULL,
   `userPassword` varchar(255) DEFAULT NULL,
   `regDate` timestamp NULL DEFAULT current_timestamp()

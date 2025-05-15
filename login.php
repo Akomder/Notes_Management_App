@@ -54,7 +54,7 @@
                                     <form  name="login" method="post" onsubmit="return valid();">
                                         <div class="form-floating mb-3">
                                             <input class="form-control" id="inputEmail" type="text" name="logindetail" placeholder="Registered Email id / Mobile Number" required />
-                                            <label for="inputEmail">Mobile Number</label>
+                                            <label for="inputEmail">Enter username or email address</address></label>
                                         </div>
                                         <div class="form-floating mb-3">
                                             <input class="form-control" id="inputPassword" type="password" placeholder="Password" name="userpassword" required />
