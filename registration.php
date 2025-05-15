@@ -2,17 +2,19 @@
     include_once('includes/config.php');
     if(isset($_POST['submit']))
     {
-        $fname=$_POST['fname'];
-        $lname=$_POST['lname'];
-        $emailid=$_POST['emailid'];
-        $mobileno=$_POST['mobileno'];
-        $npwd=md5($_POST['newpassword']);
-        $ret=mysqli_query($con,"select id from tblregistration where emailId='$emailid' || mobileNumber='$mobileno'");
-        $count=mysqli_num_rows($ret);
-        if($count==0){
-            $query=mysqli_query($con,"insert into tblregistration(firstName,lastName,emailId,mobileNumber,userPassword) values('$fname','$lname','$emailid','$mobileno','$npwd')");
+        $fname = $_POST['fname'];
+        $lname = $_POST['lname'];
+        $emailid = $_POST['emailid'];
+        $username = $_POST['username'];
+        $npwd = md5($_POST['newpassword']);
+
+        // Check if email or username already exists
+        $ret = mysqli_query($con, "SELECT id FROM tblregistration WHERE emailId='$emailid' OR username='$username'");
+        $count = mysqli_num_rows($ret);
+        if($count == 0){
+            $query = mysqli_query($con, "INSERT INTO tblregistration(firstName, lastName, emailId, username, userPassword) VALUES('$fname', '$lname', '$emailid', '$username', '$npwd')");
             if($query){
-                echo "<script>alert('Registration successfull. Please login now');</script>"; 
+                echo "<script>alert('Registration successful. Please login now');</script>"; 
                 echo "<script>window.location.href ='login.php'</script>";
             }
             else {
@@ -21,7 +23,7 @@
             }
         } 
         else{
-            echo "<script>alert('Email Id or Mobile Number already registered.Please try again.');</script>"; 
+            echo "<script>alert('Email or Username already registered. Please try again.');</script>"; 
             echo "<script>window.location.href ='registration.php'</script>";
         }
     }
@@ -35,7 +37,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>Notes Management System | Register </title>
+        <title>Notes Management App | Register </title>
         <link href="css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
         <script type="text/javascript">
@@ -85,8 +87,8 @@
                                                 <label for="inputEmail">Email address</label>
                                             </div>
                                             <div class="form-floating mb-3">
-                                                <input class="form-control" id="inputEmail" type="text" placeholder="Enter yout mobile number" name="mobileno" maxlength="10" pattern="[0-9]+"> 
-                                                <label for="inputEmail">Mobile Number</label>
+                                                <input class="form-control" id="inputEmail" type="text" placeholder="Enter your username" name="username" maxlength="10" required />
+                                                <label for="inputEmail">Username</label>
                                             </div>
                                             <div class="row mb-3">
                                                 <div class="col-md-6">

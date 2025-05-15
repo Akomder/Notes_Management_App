@@ -2,18 +2,27 @@
     session_start();
     include_once('includes/config.php');
     if(isset($_POST['login'])){
-            $emailcon=$_POST['logindetail'];
-            $password=md5($_POST['userpassword']);
-            $query=mysqli_query($con,"select mobileNumber,emailId,id from tblregistration where  (emailId='$emailcon' || mobileNumber='$emailcon') && userPassword='$password' ");
-            $ret=mysqli_fetch_array($query);
-            if($ret>0){
-                $_SESSION['noteid']=$ret['id'];
-                $_SESSION['uemail']=$ret['emailId'];
+        $emailcon = $_POST['logindetail'];
+        $password = md5($_POST['userpassword']);
+
+        // First, check if the account exists
+        $checkUser = mysqli_query($con, "SELECT id, emailId FROM tblregistration WHERE emailId='$emailcon' OR username='$emailcon'");
+        $user = mysqli_fetch_array($checkUser);
+
+        if($user) {
+            // Account exists, now check password
+            $query = mysqli_query($con, "SELECT username, emailId, id FROM tblregistration WHERE (emailId='$emailcon' OR username='$emailcon') AND userPassword='$password'");
+            $ret = mysqli_fetch_array($query);
+            if($ret){
+                $_SESSION['noteid'] = $ret['id'];
+                $_SESSION['uemail'] = $ret['emailId'];
                 echo "<script>window.location.href='dashboard.php'</script>";
+            } else {
+                echo "<script>alert('Incorrect password.');</script>";
             }
-            else{
-                echo "<script>alert('Invalid details');</script>";
-            }
+        } else {
+            echo "<script>alert('Account does not exist. Please register first.');</script>";
+        }
     }
 ?>
 
@@ -26,10 +35,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>Notes Management System</title>
+        <title>Notes Management App</title>
         <link href="css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
-        <!-- <script>
+        <script>
             function valid(){
             if(document.login.logindetail.tostring().length !== 10){
                 alert("Mobile number not valid");
@@ -38,7 +47,7 @@
             }
             return true;
         }
-        </script> -->
+        </script>
     </head>
     <body class="bg-primary">
         <div id="layoutAuthentication">
@@ -48,17 +57,21 @@
                     <div class="row justify-content-center">
                         <div class="col-lg-5">
                             <div class="card shadow-lg border-0 rounded-lg mt-5">
-                                <div class="card-header"><h3 class="text-center font-weight-light my-4">Notes Management System</h3></div>
+                                <div class="card-header"><h3 class="text-center font-weight-light my-4">Notes Management App</h3></div>
                                 <h3 class="text-center font-weight-light my-4">User Login</h3>
                                 <div class="card-body">
                                     <form  name="login" method="post" onsubmit="return valid();">
                                         <div class="form-floating mb-3">
-                                            <input class="form-control" id="inputEmail" type="text" name="logindetail" placeholder="Registered Email id / Mobile Number" required />
+                                            <input class="form-control" id="inputEmail" type="text" name="logindetail" placeholder="Registered Email id / Username" required />
                                             <label for="inputEmail">Enter username or email address</address></label>
                                         </div>
-                                        <div class="form-floating mb-3">
+                                        <div class="form-floating mb-3 position-relative">
                                             <input class="form-control" id="inputPassword" type="password" placeholder="Password" name="userpassword" required />
                                             <label for="inputPassword">Password</label>
+                                            <button type="button" class="btn btn-outline-secondary btn-sm position-absolute top-50 end-0 translate-middle-y me-2" 
+                                                onclick="togglePassword()" tabindex="-1" style="z-index:2;">
+                                                <i class="fa fa-eye" id="togglePasswordIcon"></i>
+                                            </button>
                                         </div>
                                         <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
                                             <a class="small" href="password-recovery.php">Forgot Password?</a>
@@ -81,5 +94,20 @@
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
         <script src="js/scripts.js"></script>
+        <script>
+            function togglePassword() {
+                const passwordInput = document.getElementById('inputPassword');
+                const icon = document.getElementById('togglePasswordIcon');
+                if (passwordInput.type === "password") {
+                    passwordInput.type = "text";
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    passwordInput.type = "password";
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            }
+        </script>
     </body>
 </html>
