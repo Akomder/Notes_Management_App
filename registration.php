@@ -45,11 +45,11 @@
                     document.registration.confirmpassword.focus();
                     return false;
                 }
-                // if(document.registration.mobileno.toString().length !== 10){
-                //     alert("Mobile Number not valid !!!");s
-                //     document.registration.mobileno.focus();
-                //     return false;
-                // }
+                if(document.registration.mobileno.toString().length !== 10){
+                     alert("Mobile Number not valid !!!");s
+                     document.registration.mobileno.focus();
+                     return false;
+                 }
                 return true;
             }
         </script>

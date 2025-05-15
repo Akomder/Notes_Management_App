@@ -1,3 +1,21 @@
+<?php
+    session_start();
+    include_once('includes/config.php');
+    if(isset($_POST['login'])){
+            $emailcon=$_POST['logindetail'];
+            $password=md5($_POST['userpassword']);
+            $query=mysqli_query($con,"select mobileNumber,emailId,id from tblregistration where  (emailId='$emailcon' || mobileNumber='$emailcon') && userPassword='$password' ");
+            $ret=mysqli_fetch_array($query);
+            if($ret>0){
+                $_SESSION['noteid']=$ret['id'];
+                $_SESSION['uemail']=$ret['emailId'];
+                echo "<script>window.location.href='dashboard.php'</script>";
+            }
+            else{
+                echo "<script>alert('Invalid details');</script>";
+            }
+    }
+?>
 
 
 <!DOCTYPE html>
@@ -11,16 +29,16 @@
         <title>Notes Management System</title>
         <link href="css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
-        <script>
+        <!-- <script>
             function valid(){
             if(document.login.logindetail.tostring().length !== 10){
                 alert("Mobile number not valid");
                 document.login.logindetail.focus();
                 return false;
-            } no
+            }
             return true;
         }
-        </script> 
+        </script> -->
     </head>
     <body class="bg-primary">
         <div id="layoutAuthentication">
