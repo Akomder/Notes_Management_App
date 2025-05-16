@@ -15,7 +15,7 @@ CREATE TABLE `tblregistration` (
 
 CREATE TABLE `tblcategory` (
   `id` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  `categoryName` varchar(125) DEFAULT NULL,
+  `categoryName` varchar(125) DEFAULT NOT NULL,
   `createdBy` int(5) DEFAULT NULL,
   `creationDate` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -23,10 +23,10 @@ CREATE TABLE `tblcategory` (
 CREATE TABLE `tblnotes` (
   `id` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
   `noteCategory` varchar(255) DEFAULT NULL,
-  `noteContent` TEXT DEFAULT NULL,
-  `noteTitle` varchar(255) DEFAULT NULL,
-  `noteDescription` mediumtext DEFAULT NULL,
-  `createdBy` int(5) DEFAULT NULL,
+  `noteContent` TEXT DEFAULT NOT NULL,
+  `noteTitle` varchar(255) DEFAULT NOT NULL,
+  `noteDescription` mediumtext DEFAULT NOT NULL,
+  `createdBy` int(5) DEFAULT NOT NULL,
   `creationDate` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

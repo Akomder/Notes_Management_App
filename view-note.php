@@ -47,13 +47,15 @@ if(!$row){
                             Note Details
                         </div>
                         <div class="card-body">
-                            <h4><?php echo htmlentities($row['noteTitle']); ?></h4>
-                            <p><strong>Category:</strong> <?php echo htmlentities($row['noteCategory']); ?></p>
-                            <p><strong>Created On:</strong> <?php echo htmlentities($row['creationDate']); ?></p>
+                            <h4><?php echo isset($row['noteTitle']) ? htmlentities($row['noteTitle']) : ''; ?></h4>
+                            <p><strong>Category:</strong> <?php echo isset($row['noteCategory']) ? htmlentities($row['noteCategory']) : ''; ?></p>
+                            <p><strong>Created On:</strong> <?php echo isset($row['creationDate']) ? htmlentities($row['creationDate']) : ''; ?></p>
                             <div>
-                                <?php echo nl2br(htmlentities($row['noteContent'])); ?>
+                                <?php echo isset($row['noteContent']) ? nl2br(htmlentities($row['noteContent'])) : ''; ?>
                             </div>
+                            <?php if(isset($row['id'])): ?>
                             <a href="edit-note.php?noteid=<?php echo $row['id']; ?>" class="btn btn-primary mt-3">Edit Note</a>
+                            <?php endif; ?>
                             <a href="manage-notes.php" class="btn btn-secondary mt-3">Back to Notes</a>
                         </div>
                     </div>
