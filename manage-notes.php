@@ -79,6 +79,7 @@
                                             <td> <?php echo htmlentities($row['creationDate']);?></td>
                                             <td>
                                                 <a href="view-note.php?noteid=<?php echo $row['id']?>" class="btn btn-primary">View</a> 
+                                                <a href="edit-note.php?noteid=<?php echo $row['id']?>" class="btn btn-warning">Edit</a>
                                                 <a href="manage-notes.php?id=<?php echo $row['id']?>&del=delete" onClick="return confirm('Are you sure you want to delete?')" class="btn btn-danger">Delete</a>
                                             </td>
                                         </tr>

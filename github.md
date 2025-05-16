@@ -25,3 +25,10 @@ git commit -m "updated code"
 
 # Push your changes to GitHub
 git push origin main
+
+git stash
+git pull origin main
+git stash pop
+
+# To get update from github
+git pull origin main
