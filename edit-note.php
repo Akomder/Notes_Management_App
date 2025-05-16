@@ -11,16 +11,33 @@ $noteid = isset($_GET['noteid']) ? intval($_GET['noteid']) : 0;
 
 // Handle update
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_note'])) {
-    // Get new values from the form
     $title = mysqli_real_escape_string($con, $_POST['noteTitle']);
     $category = mysqli_real_escape_string($con, $_POST['noteCategory']);
     $content = mysqli_real_escape_string($con, $_POST['noteContent']);
+
+    // Handle image upload
+    $imageName = $row['noteImage']; // keep old image by default
+    if (isset($_FILES['noteImage']) && $_FILES['noteImage']['error'] === UPLOAD_ERR_OK) {
+        $imgTmp = $_FILES['noteImage']['tmp_name'];
+        $imgName = basename($_FILES['noteImage']['name']);
+        $imgExt = strtolower(pathinfo($imgName, PATHINFO_EXTENSION));
+        $allowed = ['jpg', 'jpeg', 'png', 'gif'];
+        if (in_array($imgExt, $allowed)) {
+            $newImgName = uniqid('note_', true) . '.' . $imgExt;
+            $uploadPath = __DIR__ . '/uploads/' . $newImgName;
+            if (move_uploaded_file($imgTmp, $uploadPath)) {
+                $imageName = $newImgName;
+            }
+        }
+    }
+
     // Update the database
-    $update = mysqli_query($con, "UPDATE tblnotes SET noteTitle='$title', noteCategory='$category', noteContent='$content' WHERE id='$noteid' AND createdBy='$userid'");
+    $update = mysqli_query($con, "UPDATE tblnotes SET noteTitle='$title', noteCategory='$category', noteContent='$content', noteImage='$imageName' WHERE id='$noteid' AND createdBy='$userid'");
     if ($update) {
-        // Redirect to view-note.php to see the updated note
         echo "<script>alert('Note updated successfully');window.location='view-note.php?noteid=$noteid';</script>";
         exit();
+    } else {
+        echo "<script>alert('Failed to update note. Please try again.');</script>";
     }
 }
 
@@ -67,7 +84,7 @@ if(!$row){
                             Edit Note
                         </div>
                         <div class="card-body">
-                            <form method="post">
+                            <form method="post" enctype="multipart/form-data">
                                 <div class="mb-3">
                                     <label for="noteTitle" class="form-label"><strong>Note Title</strong></label>
                                     <input type="text" class="form-control" id="noteTitle" name="noteTitle" value="<?php echo htmlentities($row['noteTitle']); ?>" required>
@@ -79,6 +96,13 @@ if(!$row){
                                 <div class="mb-3">
                                     <label for="noteContent" class="form-label"><strong>Note Content</strong></label>
                                     <textarea class="form-control" id="noteContent" name="noteContent" rows="8" required><?php echo htmlentities($row['noteContent']); ?></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="noteImage" class="form-label"><strong>Note Image</strong></label>
+                                    <input type="file" class="form-control" id="noteImage" name="noteImage" accept="image/*">
+                                    <?php if (!empty($row['noteImage'])): ?>
+                                        <img src="uploads/<?php echo htmlentities($row['noteImage']); ?>" alt="Note Image" style="max-width:150px;margin-top:10px;">
+                                    <?php endif; ?>
                                 </div>
                                 <button type="submit" name="update_note" class="btn btn-primary">Save Changes</button>
                                 <a href="view-note.php?noteid=<?php echo $row['id']; ?>" class="btn btn-secondary">Cancel</a>

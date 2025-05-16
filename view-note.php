@@ -16,6 +16,7 @@ if($noteid){
     $row = mysqli_fetch_array($query);
 }
 if(!$row){
+    // No output before this!
     echo "<script>alert('Note not found or access denied.');window.location='manage-notes.php';</script>";
     exit();
 }
@@ -50,6 +51,7 @@ if(!$row){
                             <h4><?php echo htmlentities($row['noteTitle']); ?></h4>
                             <p><strong>Category:</strong> <?php echo htmlentities($row['noteCategory']); ?></p>
                             <p><strong>Created On:</strong> <?php echo htmlentities($row['creationDate']); ?></p>
+                            <hr>
                             <div>
                                 <?php echo nl2br(htmlentities($row['noteContent'])); ?>
                             </div>

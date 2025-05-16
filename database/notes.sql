@@ -27,7 +27,8 @@ CREATE TABLE `tblnotes` (
   `noteTitle` varchar(255) DEFAULT NULL,
   `noteDescription` mediumtext DEFAULT NULL,
   `createdBy` int(5) DEFAULT NULL,
-  `creationDate` timestamp NULL DEFAULT current_timestamp()
+  `creationDate` timestamp NULL DEFAULT current_timestamp(),
+  `noteImage` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `tblnoteshistory` (

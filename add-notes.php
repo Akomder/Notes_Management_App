@@ -1,18 +1,27 @@
 <?php
 session_start();
 include_once('includes/config.php');
-if(strlen( $_SESSION["noteid"])==0){
+if(strlen($_SESSION["noteid"])==0){
     header('location:logout.php');
+    exit();
 }
 else{
     if(isset($_POST['submit'])){
-        $category=$_POST['category'];
-        $ntitle=$_POST['notetitle'];
-        $ndescription=$_POST['notediscription'];
-        $createdby=$_SESSION['noteid'];
-        $sql=mysqli_query($con,"insert into tblnotes values(DEFAULT,'$category','$ntitle','$ndescription','$createdby',DEFAULT)");
-        echo "<script>alert('Note Added  successfully');</script>";
-        echo "<script>window.location.href='manage-notes.php'</script>";
+        $category = $_POST['category'];
+        $ntitle = $_POST['notetitle'];
+        $ndescription = $_POST['notediscription'];
+        $createdby = $_SESSION['noteid'];
+
+        // Insert the note into the database
+        $query = mysqli_query($con, "INSERT INTO tblnotes(noteTitle, noteCategory, noteContent, createdBy) VALUES('$ntitle', '$category', '$ndescription', '$createdby')");
+        if($query){
+            // Get the last inserted note id
+            $noteid = mysqli_insert_id($con);
+            echo "<script>alert('Note Added successfully');window.location='view-note.php?noteid=$noteid';</script>";
+            exit();
+        } else {
+            echo "<script>alert('Failed to add note.');</script>";
+        }
     }
 ?>
 
@@ -24,7 +33,7 @@ else{
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>Notes Management System</title>
+        <title>Notes Management App</title>
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
         <link href="css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
