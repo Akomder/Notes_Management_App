@@ -23,6 +23,7 @@ CREATE TABLE `tblcategory` (
 CREATE TABLE `tblnotes` (
   `id` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
   `noteCategory` varchar(255) DEFAULT NULL,
+  `noteContent` TEXT DEFAULT NULL,
   `noteTitle` varchar(255) DEFAULT NULL,
   `noteDescription` mediumtext DEFAULT NULL,
   `createdBy` int(5) DEFAULT NULL,

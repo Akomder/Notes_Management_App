@@ -11,15 +11,16 @@ $noteid = isset($_GET['noteid']) ? intval($_GET['noteid']) : 0;
 
 // Handle update
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_note'])) {
+    // Get new values from the form
     $title = mysqli_real_escape_string($con, $_POST['noteTitle']);
     $category = mysqli_real_escape_string($con, $_POST['noteCategory']);
     $content = mysqli_real_escape_string($con, $_POST['noteContent']);
+    // Update the database
     $update = mysqli_query($con, "UPDATE tblnotes SET noteTitle='$title', noteCategory='$category', noteContent='$content' WHERE id='$noteid' AND createdBy='$userid'");
     if ($update) {
+        // Redirect to view-note.php to see the updated note
         echo "<script>alert('Note updated successfully');window.location='view-note.php?noteid=$noteid';</script>";
         exit();
-    } else {
-        echo "<script>alert('Failed to update note');</script>";
     }
 }
 
