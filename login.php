@@ -2,27 +2,18 @@
     session_start();
     include_once('includes/config.php');
     if(isset($_POST['login'])){
-        $emailcon = $_POST['logindetail'];
-        $password = md5($_POST['userpassword']);
-
-        // First, check if the account exists
-        $checkUser = mysqli_query($con, "SELECT id, emailId FROM tblregistration WHERE emailId='$emailcon' OR username='$emailcon'");
-        $user = mysqli_fetch_array($checkUser);
-
-        if($user) {
-            // Account exists, now check password
-            $query = mysqli_query($con, "SELECT username, emailId, id FROM tblregistration WHERE (emailId='$emailcon' OR username='$emailcon') AND userPassword='$password'");
-            $ret = mysqli_fetch_array($query);
-            if($ret){
-                $_SESSION['noteid'] = $ret['id'];
-                $_SESSION['uemail'] = $ret['emailId'];
+            $emailcon=$_POST['logindetail'];
+            $password=md5($_POST['userpassword']);
+            $query=mysqli_query($con,"select mobileNumber,emailId,id from tblregistration where  (emailId='$emailcon' || mobileNumber='$emailcon') && userPassword='$password' ");
+            $ret=mysqli_fetch_array($query);
+            if($ret>0){
+                $_SESSION['noteid']=$ret['id'];
+                $_SESSION['uemail']=$ret['emailId'];
                 echo "<script>window.location.href='dashboard.php'</script>";
-            } else {
-                echo "<script>alert('Incorrect password.');</script>";
             }
-        } else {
-            echo "<script>alert('Account does not exist. Please register first.');</script>";
-        }
+            else{
+                echo "<script>alert('Invalid details');</script>";
+            }
     }
 ?>
 

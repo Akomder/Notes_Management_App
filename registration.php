@@ -2,19 +2,17 @@
     include_once('includes/config.php');
     if(isset($_POST['submit']))
     {
-        $fname = $_POST['fname'];
-        $lname = $_POST['lname'];
-        $emailid = $_POST['emailid'];
-        $username = $_POST['username'];
-        $npwd = md5($_POST['newpassword']);
-
-        // Check if email or username already exists
-        $ret = mysqli_query($con, "SELECT id FROM tblregistration WHERE emailId='$emailid' OR username='$username'");
-        $count = mysqli_num_rows($ret);
-        if($count == 0){
-            $query = mysqli_query($con, "INSERT INTO tblregistration(firstName, lastName, emailId, username, userPassword) VALUES('$fname', '$lname', '$emailid', '$username', '$npwd')");
+        $fname=$_POST['fname'];
+        $lname=$_POST['lname'];
+        $emailid=$_POST['emailid'];
+        $mobileno=$_POST['mobileno'];
+        $npwd=md5($_POST['newpassword']);
+        $ret=mysqli_query($con,"select id from tblregistration where emailId='$emailid' || mobileNumber='$mobileno'");
+        $count=mysqli_num_rows($ret);
+        if($count==0){
+            $query=mysqli_query($con,"insert into tblregistration(firstName,lastName,emailId,mobileNumber,userPassword) values('$fname','$lname','$emailid','$mobileno','$npwd')");
             if($query){
-                echo "<script>alert('Registration successful. Please login now');</script>"; 
+                echo "<script>alert('Registration successfull. Please login now');</script>"; 
                 echo "<script>window.location.href ='login.php'</script>";
             }
             else {
@@ -23,7 +21,7 @@
             }
         } 
         else{
-            echo "<script>alert('Email or Username already registered. Please try again.');</script>"; 
+            echo "<script>alert('Email Id or Mobile Number already registered.Please try again.');</script>"; 
             echo "<script>window.location.href ='registration.php'</script>";
         }
     }
