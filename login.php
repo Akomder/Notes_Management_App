@@ -4,15 +4,18 @@
     if(isset($_POST['login'])){
             $emailcon=$_POST['logindetail'];
             $password=md5($_POST['userpassword']);
-            $query=mysqli_query($con,"select mobileNumber,emailId,id from tblregistration where  (emailId='$emailcon' || mobileNumber='$emailcon') && userPassword='$password' ");
-            $ret=mysqli_fetch_array($query);
-            if($ret>0){
-                $_SESSION['noteid']=$ret['id'];
-                $_SESSION['uemail']=$ret['emailId'];
-                echo "<script>window.location.href='dashboard.php'</script>";
-            }
-            else{
-                echo "<script>alert('Invalid details');</script>";
+            $query = mysqli_query($con, "SELECT * FROM tblregistration WHERE (emailId='$emailcon' || username='$emailcon') AND userPassword='$password'");
+            $user = mysqli_fetch_assoc($query);
+            if($user){
+               // if($user['is_active'] == 1){//
+                    $_SESSION['noteid']=$user['id'];
+                    $_SESSION['uemail']=$user['emailId'];
+                    echo "<script>window.location.href='dashboard.php'</script>";
+                //} else {
+                //  echo "<script>alert('Please activate your account via the email sent to you.');window.location='login.php';</script>";
+                //}
+            } else {
+                echo "<script>alert('Invalid credentials');</script>";
             }
     }
 ?>
@@ -32,7 +35,7 @@
         <script>
             function valid(){
             if(document.login.logindetail.tostring().length !== 10){
-                alert("Mobile number not valid");
+                alert("Username not valid");
                 document.login.logindetail.focus();
                 return false;
             }

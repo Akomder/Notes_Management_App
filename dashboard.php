@@ -40,36 +40,37 @@
                                 $query=mysqli_query($con,"select * from tblnotes where createdBy='$userid'");
                                 $totalnotes=mysqli_num_rows($query);
                             ?>
-                            <div class="col-lg-6 col-xl-2 mb-4"></div>
-                            <div class="col-lg-6 col-xl-4 mb-4">
-                                <div class="card bg-primary text-white h-100">
-                                    <div class="card-body">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <div class="me-3">
-                                                <div class="text-white-75 small">Listed Categories</div>
-                                                <div class="text-lg fw-bold"><?php echo $listedcategories;?></div>
+                            <div class="row justify-content-center">
+                                <div class="col-12 col-md-6 col-xl-4 mb-4">
+                                    <div class="card bg-primary text-white h-100">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div class="me-3">
+                                                    <div class="text-white-75 small">Listed Categories</div>
+                                                    <div class="text-lg fw-bold"><?php echo $listedcategories;?></div>
+                                                </div>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 50 50" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar feather-xl text-white-50"><rect x="10" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
                                             </div>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 50 50" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar feather-xl text-white-50"><rect x="10" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
                                         </div>
-                                    </div>
-                                    <div class="card-footer d-flex align-items-center justify-content-between small">
-                                        <a class="text-white stretched-link" href="manage-categories.php">View Details</a>
+                                        <div class="card-footer d-flex align-items-center justify-content-between small">
+                                            <a class="text-white stretched-link" href="manage-categories.php">View Details</a>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-lg-6 col-xl-4 mb-4">
-                                <div class="card bg-success text-white h-100">
-                                    <div class="card-body">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <div class="me-3">
-                                                <div class="text-white-75 small">Total Notes</div>
-                                                <div class="text-lg fw-bold"><?php echo $totalnotes;?></div>
+                                <div class="col-12 col-md-6 col-xl-4 mb-4">
+                                    <div class="card bg-success text-white h-100">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div class="me-3">
+                                                    <div class="text-white-75 small">Total Notes</div>
+                                                    <div class="text-lg fw-bold"><?php echo $totalnotes;?></div>
+                                                </div>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-square feather-xl text-white-50"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
                                             </div>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-square feather-xl text-white-50"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
                                         </div>
-                                    </div>
-                                    <div class="card-footer d-flex align-items-center justify-content-between small">
-                                        <a class="text-white stretched-link" href="manage-notes.php">View Details</a>
+                                        <div class="card-footer d-flex align-items-center justify-content-between small">
+                                            <a class="text-white stretched-link" href="manage-notes.php">View Details</a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

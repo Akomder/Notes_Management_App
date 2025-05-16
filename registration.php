@@ -1,19 +1,32 @@
 <?php
     include_once('includes/config.php');
+    require_once 'includes/send_mail.php';
     if(isset($_POST['submit']))
     {
         $fname=$_POST['fname'];
         $lname=$_POST['lname'];
         $emailid=$_POST['emailid'];
-        $mobileno=$_POST['mobileno'];
+        $username=$_POST['username'];
         $npwd=md5($_POST['newpassword']);
-        $ret=mysqli_query($con,"select id from tblregistration where emailId='$emailid' || mobileNumber='$mobileno'");
+        // Check if email or username already exists
+        $ret=mysqli_query($con,"select id from tblregistration where emailId='$emailid' || username='$username'");
         $count=mysqli_num_rows($ret);
         if($count==0){
-            $query=mysqli_query($con,"insert into tblregistration(firstName,lastName,emailId,mobileNumber,userPassword) values('$fname','$lname','$emailid','$mobileno','$npwd')");
+            $activation_code = md5(rand().time());
+            $query=mysqli_query($con,"insert into tblregistration(firstName,lastName,emailId,username,userPassword,activation_code,is_active) values('$fname','$lname','$emailid','$username','$npwd','$activation_code',0)");
             if($query){
-                echo "<script>alert('Registration successfull. Please login now');</script>"; 
-                echo "<script>window.location.href ='login.php'</script>";
+                // Send activation email
+                $to = $emailid;
+                $subject = "Account Activation - Notes Management App";
+                $activation_link = "http://".$_SERVER['HTTP_HOST'].dirname($_SERVER['PHP_SELF'])."/activate.php?code=$activation_code&email=$emailid";
+                $message = "Hi $fname $lname,\n\nPlease click the following link to activate your account:\n$activation_link\n\nIf you did not register, please ignore this email.";
+
+                if(sendActivationMail($to, $subject, $message, "$fname $lname")){
+                    echo "<script>alert('Registration successful. Please check your email to activate your account.');</script>"; 
+                    echo "<script>window.location.href ='login.php'</script>";
+                } else {
+                    echo "<script>alert('Registration successful, but failed to send activation email.');</script>";
+                }
             }
             else {
                 echo "<script>alert('Something went wrong. Please try again');</script>"; 
@@ -21,7 +34,7 @@
             }
         } 
         else{
-            echo "<script>alert('Email Id or Mobile Number already registered.Please try again.');</script>"; 
+            echo "<script>alert('Email Id or Username already registered. Please try again.');</script>"; 
             echo "<script>window.location.href ='registration.php'</script>";
         }
     }

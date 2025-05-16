@@ -1,23 +1,23 @@
 <?php
-    session_start();
-    //error_reporting(0);
-    include("includes/config.php");
-    if(isset($_POST['submit'])){
-        $username=$_POST['username'];
-        $cnumber=$_POST['contactno'];
-        $newpassword=md5($_POST['inputPassword']);
-        $ret=mysqli_query($con,"SELECT id FROM tblregistration WHERE emailId='$username' and mobileNumber='$cnumber'");
-        $num=mysqli_num_rows($ret);
-        if($num>0){
-            $query=mysqli_query($con,"update tblregistration set userPassword='$newpassword' WHERE emailId='$username' and mobileNumber='$cnumber'");
-            echo "<script>alert('Password reset successfully.');</script>";
-            echo "<script type='text/javascript'> document.location ='index.php'; </script>";
-        }
-        else{
-            echo "<script>alert('Invalid username or Contact Number');</script>";
-            echo "<script type='text/javascript'> document.location ='password-recovery.php'; </script>";
-        }
+session_start();
+//error_reporting(0);
+include("includes/config.php");
+if (isset($_POST['submit'])) {
+    $username = $_POST['username'];
+    $newpassword = md5($_POST['inputPassword']);
+
+    // Check only by email/username
+    $ret = mysqli_query($con, "SELECT id FROM tblregistration WHERE emailId='$username' OR username='$username'");
+    $num = mysqli_num_rows($ret);
+    if ($num > 0) {
+        $query = mysqli_query($con, "UPDATE tblregistration SET userPassword='$newpassword' WHERE emailId='$username' OR username='$username'");
+        echo "<script>alert('Password reset successfully.');</script>";
+        echo "<script type='text/javascript'> document.location ='index.php'; </script>";
+    } else {
+        echo "<script>alert('Invalid username');</script>";
+        echo "<script type='text/javascript'> document.location ='password-recovery.php'; </script>";
     }
+}
 ?>
 
 <!DOCTYPE html>
@@ -55,11 +55,7 @@
                                         <form method="post" name="passwordrecovery" onSubmit="return valid();">
                                             <div class="form-floating mb-3">
                                                 <input class="form-control" id="username" name="username" type="text" placeholder="Username" required />
-                                                <label for="username">Emailid</label>
-                                            </div>
-                                            <div class="form-floating mb-3">
-                                                <input class="form-control" id="contactno" name="contactno" type="text" placeholder="Contact Number" required />
-                                                <label for="username">Contact No.</label>
+                                                <label for="username">Email or username</label>
                                             </div>
                                             <div class="form-floating mb-3">
                                                 <input class="form-control" id="inputPassword" name="inputPassword" type="password" placeholder="Password" required />

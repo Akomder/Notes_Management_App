@@ -48,9 +48,9 @@ if(!$row){
                             Note Details
                         </div>
                         <div class="card-body">
-                            <h4><?php echo htmlentities($row['noteTitle']); ?></h4>
-                            <p><strong>Category:</strong> <?php echo htmlentities($row['noteCategory']); ?></p>
-                            <p><strong>Created On:</strong> <?php echo htmlentities($row['creationDate']); ?></p>
+                            <h4><?php echo htmlentities($row['noteTitle'] ?? ''); ?></h4>
+                            <p><strong>Category:</strong> <?php echo htmlentities($row['noteCategory'] ?? ''); ?></p>
+                            <p><strong>Created On:</strong> <?php echo htmlentities($row['creationDate'] ?? ''); ?></p>
                             <div>
                                 <?php echo isset($row['noteContent']) ? nl2br(htmlentities($row['noteContent'])) : ''; ?>
                             </div>

@@ -7,9 +7,12 @@ CREATE TABLE `tblregistration` (
   `firstName` varchar(150) DEFAULT NULL,
   `lastName` varchar(150) DEFAULT NULL,
   `emailId` varchar(150) DEFAULT NULL,
-  `mobileNumber` bigint(12) DEFAULT NULL,
+  `username` varchar(20) DEFAULT NULL,
   `userPassword` varchar(255) DEFAULT NULL,
-  `regDate` timestamp NULL DEFAULT current_timestamp()
+  `regDate` timestamp NULL DEFAULT current_timestamp(),
+  `activation_code` VARCHAR(64) DEFAULT NULL,
+  `is_active` TINYINT(1) DEFAULT 0,
+  'avatar' VARCHAR(255) DEFAULT NULL;
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `tblcategory` (

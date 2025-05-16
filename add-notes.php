@@ -1,26 +1,42 @@
 <?php
 session_start();
 include_once('includes/config.php');
-if(strlen($_SESSION["noteid"])==0){
+if(strlen( $_SESSION["noteid"])==0){
     header('location:logout.php');
-    exit();
 }
 else{
     if(isset($_POST['submit'])){
-        $category = $_POST['category'];
-        $ntitle = $_POST['notetitle'];
-        $ndescription = $_POST['notediscription'];
-        $createdby = $_SESSION['noteid'];
+        $category=$_POST['category'];
+        $ntitle=$_POST['notetitle'];
+        $ndescription=$_POST['notediscription'];
+        $createdby=$_SESSION['noteid'];
 
-        // Insert the note into the database
-        $query = mysqli_query($con, "INSERT INTO tblnotes(noteTitle, noteCategory, noteContent, createdBy) VALUES('$ntitle', '$category', '$ndescription', '$createdby')");
-        if($query){
-            // Get the last inserted note id
-            $noteid = mysqli_insert_id($con);
-            echo "<script>alert('Note Added successfully');window.location='view-note.php?noteid=$noteid';</script>";
+        // Image upload handling
+        $imagePath = '';
+        if(isset($_FILES['noteimage']) && $_FILES['noteimage']['error'] == 0){
+            $targetDir = "uploads/";
+            if(!is_dir($targetDir)){
+                mkdir($targetDir, 0777, true);
+            }
+            $fileName = basename($_FILES["noteimage"]["name"]);
+            $targetFilePath = $targetDir . time() . '_' . $fileName;
+            $fileType = strtolower(pathinfo($targetFilePath,PATHINFO_EXTENSION));
+            $allowedTypes = array('jpg','jpeg','png','gif');
+            if(in_array($fileType, $allowedTypes)){
+                if(move_uploaded_file($_FILES["noteimage"]["tmp_name"], $targetFilePath)){
+                    $imagePath = $targetFilePath;
+                }
+            }
+        }
+
+        // Insert with image path
+        $sql = mysqli_query($con, "INSERT INTO tblnotes (noteCategory, noteTitle, noteDescription, noteImage, createdBy) VALUES ('$category', '$ntitle', '$ndescription', '$imagePath', '$createdby')");
+        if($sql){
+            $_SESSION['msg'] = "Note Added successfully";
+            header('Location: manage-notes.php');
             exit();
         } else {
-            echo "<script>alert('Failed to add note.');</script>";
+            echo "<script>alert('Failed to add note');</script>";
         }
     }
 ?>
@@ -33,7 +49,7 @@ else{
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>Notes Management App</title>
+        <title>Notes Management System</title>
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
         <link href="css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
@@ -62,7 +78,7 @@ else{
                                             $query=mysqli_query($con,"select * from tblcategory where createdBy='$userid'");
                                             while($row=mysqli_fetch_array($query))
                                             {?>
-                                            <option value="<?php echo $row['categoryName'];?>"><?php echo $row['categoryName'];?></option>
+                                            <option value="<?php echo $row['id'];?>"><?php echo $row['categoryName'];?></option>
                                             <?php } ?>
                                             </select>    
                                         </div>
@@ -74,6 +90,10 @@ else{
                                     <div class="row" style="margin-top:1%;">
                                         <div class="col-2">Note Description</div>
                                         <div class="col-6"><textarea  name="notediscription"  placeholder="Enter Note Description" rows="6" class="form-control"></textarea></div>
+                                    </div>
+                                    <div class="row" style="margin-top:1%;">
+                                        <div class="col-2">Note Image</div>
+                                        <div class="col-6"><input type="file" name="noteimage" accept="image/*" class="form-control"></div>
                                     </div>
                                     <div class="row" style="margin-top:1%">
                                         <div class="col-2">&nbsp;</div>
