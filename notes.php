@@ -3,17 +3,72 @@
     include_once('includes/config.php');
     if(strlen($_SESSION["noteid"])==0){
         header('location:logout.php');
-    }
-    else {
-    // For deleting
-    if($_GET['del']){
-        $nid=$_GET['id'];
-        $userid=$_SESSION["noteid"];
-        mysqli_query($con,"delete from tblnotes where id ='$nid' and  createdBy='$userid'");
-        mysqli_query($con,"delete from tblnoteshistory where noteId ='$nid' and  userId='$userid'");
-        echo "<script>alert('Note Deleted');</script>";
-        echo "<script>window.location.href='manage-notes.php'</script>";
-    }
+    } else {
+        $userid = $_SESSION["noteid"];
+
+        // Handle Adding notes
+        if(isset($_POST['add_note'])){
+            $category = $_POST['category']; // Assuming category is selected by ID
+            $ntitle = $_POST['notetitle'];
+            $ndescription = $_POST['notediscription'];
+
+            // Image upload handling
+            $imagePath = '';
+            if(isset($_FILES['noteimage']) && $_FILES['noteimage']['error'] == 0){
+                $targetDir = "uploads/";
+                 if (!is_dir(__DIR__ . '/uploads/')) {
+                    mkdir(__DIR__ . '/uploads/', 0777, true);
+                }
+                $fileName = basename($_FILES["noteimage"]["name"]);
+                $targetFilePath = $targetDir . time() . '_' . $fileName;
+                $fileType = strtolower(pathinfo($targetFilePath,PATHINFO_EXTENSION));
+                $allowedTypes = array('jpg','jpeg','png','gif');
+                if(in_array($fileType, $allowedTypes)){
+                    if(move_uploaded_file($_FILES["noteimage"]["tmp_name"], $targetFilePath)){
+                        $imagePath = $targetFilePath;
+                    }
+                }
+            }
+
+             // Get category name from category ID
+            $categoryQuery = mysqli_query($con, "SELECT categoryName FROM tblcategory WHERE id='$category' AND createdBy='$userid'");
+            $categoryRow = mysqli_fetch_array($categoryQuery);
+            $categoryName = $categoryRow ? $categoryRow['categoryName'] : 'Uncategorized'; // Default if category not found
+
+
+            // Insert with image path and category name
+            $sql = mysqli_query($con, "INSERT INTO tblnotes (noteCategory, noteTitle, noteDescription, noteImage, createdBy) VALUES ('$categoryName', '$ntitle', '$ndescription', '$imagePath', '$userid')");
+
+            if($sql){
+                echo "<script>alert('Note added successfully');</script>";
+                // Redirect to the same page to show the updated list
+                echo "<script>window.location.href='notes.php';</script>";
+                exit(); // Exit after redirect
+            } else {
+                echo "<script>alert('Failed to add note');</script>";
+            }
+        }
+
+        // Handle Deleting notes
+        if(isset($_GET['delid'])){
+            $nid = intval($_GET['delid']);
+            // Optional: Delete the associated image file
+            $getImageQuery = mysqli_query($con, "SELECT noteImage FROM tblnotes WHERE id='$nid' AND createdBy='$userid'");
+            $imageRow = mysqli_fetch_array($getImageQuery);
+            if ($imageRow && !empty($imageRow['noteImage'])) {
+                 $imageToDelete = __DIR__ . '/uploads/' . $imageRow['noteImage'];
+                 if (file_exists($imageToDelete)) {
+                      unlink($imageToDelete); // Delete the file
+                 }
+            }
+
+            mysqli_query($con, "DELETE FROM tblnotes WHERE id ='$nid' AND createdBy='$userid'");
+            mysqli_query($con,"DELETE FROM tblnoteshistory WHERE noteId ='$nid' AND userId='$userid'"); // Assuming you also want to delete history
+            echo "<script>alert('Note Deleted');</script>";
+             // Redirect to the same page after deletion
+            echo "<script>window.location.href='notes.php';</script>";
+            exit(); // Exit after redirect
+        }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -23,12 +78,14 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>Manage Notes | Notes Management System</title> <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
+        <title>Notes | Notes Management System</title>
+        <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
         <link href="css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
 
         <style>
-            body {
+            /* Paste the <style> block from your dashboard.php here */
+             body {
                 font-family: 'SF Pro Display', 'SF Pro Icons', 'Helvetica Neue', Helvetica, Arial, sans-serif;
                 background: linear-gradient(135deg, #f5f7fa,rgb(196, 200, 255)); /* Dashboard background */
                 color: #111; /* Dashboard text color */
@@ -77,6 +134,7 @@
             body.dark-mode .breadcrumb-item a {
                 color: #bf5aff !important;
             }
+
 
             /* Cards - Dashboard style */
             .card {
@@ -188,9 +246,10 @@
                 transition: background-color 0.2s ease;
             }
 
-            body.dark-mode #datatablesSimple tbody tr {
-                border-bottom-color: #3a3a3c;
-            }
+             body.dark-mode #datatablesSimple tbody tr {
+                 border-bottom-color: #3a3a3c;
+             }
+
 
             #datatablesSimple tbody tr:last-child {
                 border-bottom: none;
@@ -265,7 +324,6 @@
             #darkModeToggle:hover {
                 opacity: 0.9;
             }
-
         </style>
     </head>
     <body class="sb-nav-fixed">
@@ -275,15 +333,57 @@
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid px-4">
-                        <h1 class="mt-4">Manage Notes</h1>
-                        <ol class="breadcrumb mb-4">
+                        <h1 class="mt-4">Notes</h1>
+                         <ol class="breadcrumb mb-4">
                             <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
-                            <li class="breadcrumb-item active">Manage Notes</li>
+                            <li class="breadcrumb-item active">Notes</li>
                         </ol>
+
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="fas fa-plus me-1"></i>
+                                Add New Note
+                            </div>
+                            <div class="card-body">
+                                <form method="post" enctype="multipart/form-data">
+                                     <div class="row mb-3">
+                                        <div class="col-md-2 form-label">Category</div>
+                                        <div class="col-md-6">
+                                            <select name="category" id="category" class="form-control" required>
+                                            <option value="">Select Category</option>
+                                            <?php $query=mysqli_query($con,"select * from tblcategory where createdBy='$userid'");
+                                            while($row=mysqli_fetch_array($query))
+                                            {?>
+                                            <option value="<?php echo $row['id'];?>"><?php echo $row['categoryName'];?></option>
+                                            <?php } ?>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-2 form-label">Note Title</div>
+                                        <div class="col-md-6"><input type="text" name="notetitle" placeholder="Enter the note title" class="form-control" required></div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-2 form-label">Note Content</div>
+                                        <div class="col-md-6"><textarea name="notediscription" placeholder="Enter Note Description" rows="6" class="form-control" required></textarea></div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-2 form-label">Note Image</div>
+                                        <div class="col-md-6"><input type="file" name="noteimage" accept="image/*" class="form-control"></div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-2"></div> <div class="col-md-6">
+                                            <button type="submit" name="add_note" class="btn btn-primary">Add Note</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
                         <div class="card mb-4">
                             <div class="card-header">
                                 <i class="fas fa-table me-1"></i>
-                                Notes Details
+                                Manage Notes
                             </div>
                             <div class="card-body">
                                 <table id="datatablesSimple">
@@ -307,10 +407,9 @@
                                     </tfoot>
                                     <tbody>
                                         <?php
-                                            $userid=$_SESSION["noteid"];
-                                            $query=mysqli_query($con,"select * from tblnotes where createdBy='$userid'");
-                                            $cnt=1;
-                                            while($row=mysqli_fetch_array($query)){
+                                            $query = mysqli_query($con, "SELECT * FROM tblnotes WHERE createdBy='$userid'");
+                                            $cnt = 1;
+                                            while($row = mysqli_fetch_array($query)){
                                         ?>
                                         <tr>
                                             <td><?php echo htmlentities($cnt);?></td>
@@ -318,7 +417,10 @@
                                             <td><?php echo htmlentities($row['noteCategory']);?></td>
                                             <td> <?php echo htmlentities($row['creationDate']);?></td>
                                             <td>
-                                                <a href="view-note.php?noteid=<?php echo $row['id']?>" class="btn btn-primary btn-sm">View</a> <a href="edit-note.php?noteid=<?php echo $row['id']?>" class="btn btn-warning btn-sm">Edit</a> <a href="manage-notes.php?id=<?php echo $row['id']?>&del=delete" onClick="return confirm('Are you sure you want to delete?')" class="btn btn-danger btn-sm">Delete</a> </td>
+                                                <a href="view-note.php?noteid=<?php echo $row['id']?>" class="btn btn-primary btn-sm">View</a>
+                                                <a href="edit-note.php?noteid=<?php echo $row['id']?>" class="btn btn-warning btn-sm">Edit</a>
+                                                <a href="notes.php?delid=<?php echo $row['id']?>" onClick="return confirm('Are you sure you want to delete?')" class="btn btn-danger btn-sm">Delete</a>
+                                            </td>
                                         </tr>
                                         <?php $cnt=$cnt+1; } ?>
                                     </tbody>
@@ -339,4 +441,4 @@
         <script src="js/datatables-simple-demo.js"></script>
     </body>
 </html>
-<?php }  ?>
+<?php } ?>

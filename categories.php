@@ -3,15 +3,31 @@
     include_once('includes/config.php');
     if(strlen($_SESSION["noteid"])==0){
         header('location:logout.php');
-    }
-    else {
-    // For deleting
-        if($_GET['del']){
-            $catid=$_GET['id'];
-            $userid=$_SESSION["noteid"];
-            mysqli_query($con,"delete from tblcategory where id ='$catid' and  createdBy='$userid'");
-            echo "<script>alert('Data Deleted');</script>";
-            echo "<script>window.location.href='manage-categories.php'</script>";
+    } else {
+        $userid = $_SESSION["noteid"];
+
+        // Handle Adding categories
+        if(isset($_POST['add_category'])){
+            $category = $_POST['category_name'];
+            $sql = mysqli_query($con, "INSERT INTO tblcategory(categoryName, createdBy) VALUES('$category', '$userid')");
+            if ($sql) {
+                echo "<script>alert('Category added successfully');</script>";
+                // Redirect to the same page to show the updated list
+                 echo "<script>window.location.href='categories.php';</script>";
+                 exit(); // Exit after redirect
+            } else {
+                 echo "<script>alert('Failed to add category');</script>";
+            }
+        }
+
+        // Handle Deleting categories
+        if(isset($_GET['delid'])){
+            $catid = intval($_GET['delid']);
+            mysqli_query($con, "DELETE FROM tblcategory WHERE id ='$catid' AND createdBy='$userid'");
+            echo "<script>alert('Category Deleted');</script>";
+             // Redirect to the same page after deletion
+            echo "<script>window.location.href='categories.php';</script>";
+            exit(); // Exit after redirect
         }
 ?>
 <!DOCTYPE html>
@@ -22,11 +38,13 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>Manage Categories | Notes Management System</title> <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
+        <title>Categories | Notes Management System</title>
+        <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
         <link href="css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
 
         <style>
+            /* Paste the <style> block from your dashboard.php here */
             body {
                 font-family: 'SF Pro Display', 'SF Pro Icons', 'Helvetica Neue', Helvetica, Arial, sans-serif;
                 background: linear-gradient(135deg, #f5f7fa,rgb(196, 200, 255)); /* Dashboard background */
@@ -76,6 +94,7 @@
             body.dark-mode .breadcrumb-item a {
                 color: #bf5aff !important;
             }
+
 
             /* Cards - Dashboard style */
             .card {
@@ -187,9 +206,10 @@
                 transition: background-color 0.2s ease;
             }
 
-            body.dark-mode #datatablesSimple tbody tr {
-                border-bottom-color: #3a3a3c;
-            }
+             body.dark-mode #datatablesSimple tbody tr {
+                 border-bottom-color: #3a3a3c;
+             }
+
 
             #datatablesSimple tbody tr:last-child {
                 border-bottom: none;
@@ -274,15 +294,35 @@
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid px-4">
-                        <h1 class="mt-4">Manage Categories</h1>
-                        <ol class="breadcrumb mb-4">
+                        <h1 class="mt-4">Categories</h1>
+                         <ol class="breadcrumb mb-4">
                             <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
-                            <li class="breadcrumb-item active">Manage Categories</li>
+                            <li class="breadcrumb-item active">Categories</li>
                         </ol>
+
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="fas fa-plus me-1"></i>
+                                Add New Category
+                            </div>
+                            <div class="card-body">
+                                <form method="post">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <input type="text" name="category_name" placeholder="Enter category name" class="form-control" required>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <button type="submit" name="add_category" class="btn btn-primary">Add Category</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
                         <div class="card mb-4">
                             <div class="card-header">
                                 <i class="fas fa-table me-1"></i>
-                                Categories Details
+                                Manage Categories
                             </div>
                             <div class="card-body">
                                 <table id="datatablesSimple">
@@ -297,24 +337,25 @@
                                     <tfoot>
                                         <tr>
                                             <th>#</th>
-                                            <th>#</th> <th>Category</th>
+                                            <th>Category</th>
                                             <th>Creation date</th>
                                             <th>Action</th>
                                         </tr>
                                     </tfoot>
                                     <tbody>
                                         <?php
-                                            $userid=$_SESSION["noteid"];
-                                            $query=mysqli_query($con,"select id,categoryName,creationDate from tblcategory where createdBy='$userid'");
-                                            $cnt=1;
-                                            while($row=mysqli_fetch_array($query)){
+                                            $query = mysqli_query($con, "SELECT id, categoryName, creationDate FROM tblcategory WHERE createdBy='$userid'");
+                                            $cnt = 1;
+                                            while($row = mysqli_fetch_array($query)){
                                         ?>
                                         <tr>
                                             <td><?php echo htmlentities($cnt);?></td>
                                             <td><?php echo htmlentities($row['categoryName']);?></td>
                                             <td> <?php echo htmlentities($row['creationDate']);?></td>
                                             <td>
-                                                <a href="edit-category.php?id=<?php echo $row['id']?>" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i> Edit</a> <a href="manage-categories.php?id=<?php echo $row['id']?>&del=delete" onClick="return confirm('Are you sure you want to delete?')" class="btn btn-danger btn-sm"><i class="fa fa-trash" aria-hidden="true"></i> Delete</a> </td>
+                                                <a href="edit-category.php?id=<?php echo $row['id']?>" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i> Edit</a>
+                                                <a href="categories.php?delid=<?php echo $row['id']?>" onClick="return confirm('Are you sure you want to delete?')" class="btn btn-danger btn-sm"><i class="fa fa-trash" aria-hidden="true"></i> Delete</a>
+                                            </td>
                                         </tr>
                                         <?php $cnt=$cnt+1; } ?>
                                     </tbody>
@@ -335,4 +376,4 @@
         <script src="js/datatables-simple-demo.js"></script>
     </body>
 </html>
-<?php }  ?>
+<?php } ?>

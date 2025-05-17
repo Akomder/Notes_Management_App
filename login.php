@@ -4,12 +4,31 @@
     if(isset($_POST['login'])){
             $emailcon=$_POST['logindetail'];
             $password=md5($_POST['userpassword']); // Note: md5 is outdated and insecure for passwords. Consider stronger hashing like bcrypt.
-            $query = mysqli_query($con, "SELECT * FROM tblregistration WHERE emailId='$emailcon' AND userPassword='$password'");
-            $user = mysqli_fetch_assoc($query);
+
+            // Using prepared statements for security
+            $stmt = mysqli_prepare($con, "SELECT id, emailId FROM tblregistration WHERE (emailId = ? OR username = ?) AND userPassword = ?");
+            mysqli_stmt_bind_param($stmt, 'sss', $emailcon, $emailcon, $password);
+            mysqli_stmt_execute($stmt);
+            $result = mysqli_stmt_get_result($stmt);
+            $user = mysqli_fetch_assoc($result);
+            mysqli_stmt_close($stmt);
+
             if($user){
-                    $_SESSION['noteid']=$user['id'];
-                    $_SESSION['uemail']=$user['emailId'];
-                    echo "<script>window.location.href='dashboard.php'</script>";
+                    // Check if the account is active (assuming 'is_active' column exists and 1 means active)
+                    // You might need to fetch the 'is_active' column in the query above if you implemented activation
+                    $activeCheck = mysqli_query($con, "SELECT is_active FROM tblregistration WHERE id = " . $user['id']);
+                    $activeRow = mysqli_fetch_assoc($activeCheck);
+
+                    if ($activeRow && $activeRow['is_active'] == 1) {
+                         $_SESSION['noteid']=$user['id'];
+                         $_SESSION['uemail']=$user['emailId'];
+                         echo "<script>window.location.href='dashboard.php'</script>";
+                    } else if ($activeRow && $activeRow['is_active'] == 0) {
+                         echo "<script>alert('Your account is not activated. Please check your email.');</script>";
+                    } else {
+                         // Should not happen if user is found, but good for safety
+                         echo "<script>alert('Invalid credentials or account status.');</script>";
+                    }
             } else {
                 echo "<script>alert('Invalid credentials');</script>";
             }
@@ -385,7 +404,7 @@
 
                 <div class="card-footer">
                     <div class="small">
-                        <a href="forgot-password.php">Forgot Password?</a> &nbsp;|&nbsp; <a href="register.php">Create Account</a>
+                        <a href="forgot-password.php">Forgot Password?</a> &nbsp;|&nbsp; <a href="registration.php">Create Account</a>
                     </div>
                 </div>
             </form>
