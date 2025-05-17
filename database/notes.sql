@@ -12,7 +12,7 @@ CREATE TABLE `tblregistration` (
   `regDate` timestamp NULL DEFAULT current_timestamp(),
   `activation_code` VARCHAR(64) DEFAULT NULL,
   `is_active` TINYINT(1) DEFAULT 0,
-  'avatar' VARCHAR(255) DEFAULT NULL;
+  `avatar` VARCHAR(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `tblcategory` (
@@ -30,6 +30,8 @@ CREATE TABLE `tblnotes` (
   `noteImage` varchar(255) DEFAULT NULL,
   `createdBy` int(5) DEFAULT NULL,
   `creationDate` timestamp NULL DEFAULT current_timestamp()
+  `password_hash` VARCHAR(255) DEFAULT NULL;
+
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `tblnoteshistory` (

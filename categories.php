@@ -1,40 +1,54 @@
 <?php
-session_start();
-include_once('includes/config.php');
-if (strlen($_SESSION["noteid"]) == 0) {
-    header('location:logout.php');
-} else {
-    //For Adding categories
-    if (isset($_POST['submit'])) {
-        $category = $_POST['category'];
-        $createdby = $_SESSION["noteid"];
-        $sql = mysqli_query($con, "insert into tblcategory(categoryName,createdBy) values('$category',$createdby)");
-        echo "<script>alert('Category added successfully');</script>";
-        echo "<script>window.location.href='manage-categories.php'</script>";
-    }
+    session_start();
+    include_once('includes/config.php');
+    if(strlen($_SESSION["noteid"])==0){
+        header('location:logout.php');
+    } else {
+        $userid = $_SESSION["noteid"];
+
+        // Handle Adding categories
+        if(isset($_POST['add_category'])){
+            $category = $_POST['category_name'];
+            $sql = mysqli_query($con, "INSERT INTO tblcategory(categoryName, createdBy) VALUES('$category', '$userid')");
+            if ($sql) {
+                echo "<script>alert('Category added successfully');</script>";
+                // Redirect to the same page to show the updated list
+                 echo "<script>window.location.href='categories.php';</script>";
+                 exit(); // Exit after redirect
+            } else {
+                 echo "<script>alert('Failed to add category');</script>";
+            }
+        }
+
+        // Handle Deleting categories
+        if(isset($_GET['delid'])){
+            $catid = intval($_GET['delid']);
+            mysqli_query($con, "DELETE FROM tblcategory WHERE id ='$catid' AND createdBy='$userid'");
+            echo "<script>alert('Category Deleted');</script>";
+             // Redirect to the same page after deletion
+            echo "<script>window.location.href='categories.php';</script>";
+            exit(); // Exit after redirect
+        }
 ?>
-
-    <!DOCTYPE html>
-    <html lang="en">
-
+<!DOCTYPE html>
+<html lang="en">
     <head>
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>Add Category | Notes Management System</title>
+        <title>Categories | Notes Management System</title>
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
         <link href="css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
 
         <style>
+            /* Paste the <style> block from your dashboard.php here */
             body {
                 font-family: 'SF Pro Display', 'SF Pro Icons', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-                background: linear-gradient(135deg, #f5f7fa, rgb(196, 200, 255));
-                /* Dashboard background */
-                color: #111;
-                /* Dashboard text color */
+                background: linear-gradient(135deg, #f5f7fa,rgb(196, 200, 255)); /* Dashboard background */
+                color: #111; /* Dashboard text color */
                 transition: background-color 0.4s ease, color 0.4s ease;
             }
 
@@ -136,17 +150,17 @@ if (strlen($_SESSION["noteid"]) == 0) {
                 opacity: 0.9;
             }
 
-            /* Form controls - Basic styling to fit the theme */
-            .form-control {
-                border-radius: 8px;
-                border-color: #ced4da;
-                transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-            }
+             /* Form controls - Basic styling to fit the theme */
+             .form-control {
+                 border-radius: 8px;
+                 border-color: #ced4da;
+                 transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+             }
 
-            .form-control:focus {
-                border-color: #007aff;
-                box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
-            }
+             .form-control:focus {
+                 border-color: #007aff;
+                 box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+             }
 
             body.dark-mode .form-control {
                 background-color: #3a3a3c;
@@ -155,24 +169,23 @@ if (strlen($_SESSION["noteid"]) == 0) {
             }
 
             body.dark-mode .form-control:focus {
-                border-color: #0a84ff;
-                box-shadow: 0 0 0 0.25rem rgba(10, 132, 255, 0.25);
+                 border-color: #0a84ff;
+                 box-shadow: 0 0 0 0.25rem rgba(10, 132, 255, 0.25);
             }
 
 
-            /* Table - Dashboard style (if applicable) */
+            /* Table - Dashboard style */
             #datatablesSimple {
-                /* Adjust if your table has a different ID/class */
                 border-collapse: separate;
                 border-spacing: 0;
                 border-radius: 10px;
-                overflow: hidden;
+                overflow: hidden; /* Ensures rounded corners apply to content */
                 border: 1px solid #e0e0e0;
             }
 
-            body.dark-mode #datatablesSimple {
-                border-color: #3a3a3c;
-            }
+             body.dark-mode #datatablesSimple {
+                  border-color: #3a3a3c;
+             }
 
             #datatablesSimple thead th {
                 background-color: #e0e0e0;
@@ -193,9 +206,10 @@ if (strlen($_SESSION["noteid"]) == 0) {
                 transition: background-color 0.2s ease;
             }
 
-            body.dark-mode #datatablesSimple tbody tr {
-                border-bottom-color: #3a3a3c;
-            }
+             body.dark-mode #datatablesSimple tbody tr {
+                 border-bottom-color: #3a3a3c;
+             }
+
 
             #datatablesSimple tbody tr:last-child {
                 border-bottom: none;
@@ -204,7 +218,7 @@ if (strlen($_SESSION["noteid"]) == 0) {
             #datatablesSimple tbody td {
                 background-color: #ffffff;
                 color: #1c1c1e;
-                padding: 12px 15px;
+                 padding: 12px 15px;
             }
 
             body.dark-mode #datatablesSimple tbody td {
@@ -219,6 +233,35 @@ if (strlen($_SESSION["noteid"]) == 0) {
             body.dark-mode #datatablesSimple tbody tr:hover td {
                 background-color: #3a3a3c;
             }
+
+
+            /* Dashboard Header with Description (if applicable to this page) */
+            .dashboard-header-container {
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+
+            .dashboard-header-container h1 {
+                font-size: 2rem;
+                font-weight: 700;
+                color: #1c1c1e;
+                margin-bottom: 5px;
+            }
+
+             body.dark-mode .dashboard-header-container h1 {
+                 color: #f2f2f7;
+             }
+
+            .dashboard-description {
+                font-size: 1rem;
+                color: #636366;
+                margin-bottom: 0;
+            }
+
+             body.dark-mode .dashboard-description {
+                color: #8e8e93;
+             }
+
 
             /* Dark mode toggle button (if present on this page) */
             #darkModeToggle {
@@ -241,38 +284,87 @@ if (strlen($_SESSION["noteid"]) == 0) {
             #darkModeToggle:hover {
                 opacity: 0.9;
             }
+
         </style>
     </head>
-
-    <body>
-        <?php include_once('includes/header.php'); ?>
+    <body class="sb-nav-fixed">
+        <?php include_once('includes/header.php');?>
         <div id="layoutSidenav">
-            <?php include_once('includes/leftbar.php'); ?>
+            <?php include_once('includes/leftbar.php');?>
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid px-4">
-                        <h1 class="mt-4">Add Category</h1>
-                        <ol class="breadcrumb mb-4">
+                        <h1 class="mt-4">Categories</h1>
+                         <ol class="breadcrumb mb-4">
                             <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
-                            <li class="breadcrumb-item active">Add Category</li>
+                            <li class="breadcrumb-item active">Categories</li>
                         </ol>
+
                         <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="fas fa-plus me-1"></i>
+                                Add New Category
+                            </div>
                             <div class="card-body">
                                 <form method="post">
                                     <div class="row">
-                                        <div class="col-md-2">Category Name</div>
-                                        <div class="col-md-4"><input type="text" placeholder="Enter category Name" name="category" class="form-control" required></div>
-                                    </div>
-                                    <div class="row mt-3">
-                                        <div class="col-md-2"></div>
-                                        <div class="col-md-4"><button type="submit" name="submit" class="btn btn-primary">Submit</button></div>
+                                        <div class="col-md-3">
+                                            <input type="text" name="category_name" placeholder="Enter category name" class="form-control" required>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <button type="submit" name="add_category" class="btn btn-primary">Add Category</button>
+                                        </div>
                                     </div>
                                 </form>
                             </div>
                         </div>
+
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="fas fa-table me-1"></i>
+                                Manage Categories
+                            </div>
+                            <div class="card-body">
+                                <table id="datatablesSimple">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Category</th>
+                                            <th>Creation date</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tfoot>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Category</th>
+                                            <th>Creation date</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </tfoot>
+                                    <tbody>
+                                        <?php
+                                            $query = mysqli_query($con, "SELECT id, categoryName, creationDate FROM tblcategory WHERE createdBy='$userid'");
+                                            $cnt = 1;
+                                            while($row = mysqli_fetch_array($query)){
+                                        ?>
+                                        <tr>
+                                            <td><?php echo htmlentities($cnt);?></td>
+                                            <td><?php echo htmlentities($row['categoryName']);?></td>
+                                            <td> <?php echo htmlentities($row['creationDate']);?></td>
+                                            <td>
+                                                <a href="edit-category.php?id=<?php echo $row['id']?>" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i> Edit</a>
+                                                <a href="categories.php?delid=<?php echo $row['id']?>" onClick="return confirm('Are you sure you want to delete?')" class="btn btn-danger btn-sm"><i class="fa fa-trash" aria-hidden="true"></i> Delete</a>
+                                            </td>
+                                        </tr>
+                                        <?php $cnt=$cnt+1; } ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </main>
-                <?php include_once('includes/footer.php'); ?>
+                <?php include_once('includes/footer.php');?>
             </div>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
@@ -283,6 +375,5 @@ if (strlen($_SESSION["noteid"]) == 0) {
         <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" crossorigin="anonymous"></script>
         <script src="js/datatables-simple-demo.js"></script>
     </body>
-
-    </html>
-<?php }  ?>
+</html>
+<?php } ?>
