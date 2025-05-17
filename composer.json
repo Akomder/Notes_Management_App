@@ -1,0 +1,6 @@
+{
+    "name": "souka/notes_managment_app",
+    "require": {
+        "phpmailer/phpmailer": "^6.10"
+    }
+}
