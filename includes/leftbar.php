@@ -57,3 +57,87 @@
         </div>
     </nav>
 </div>
+
+<style>
+    /* Apple-inspired styles for the left sidebar with blur and white text */
+    .sb-sidenav-dark {
+        background-color: rgba(28, 28, 30, 0.8); /* Semi-transparent dark background */
+        color: #f2f2f7; /* Light text */
+        backdrop-filter: blur(10px); /* Apply blur effect */
+        -webkit-backdrop-filter: blur(10px); /* Safari support */
+    }
+
+    .sb-sidenav-dark .sb-sidenav-menu-heading {
+        color: rgba(242, 242, 247, 0.6); /* Slightly less opaque white for headings */
+        font-size: 12px;
+        padding: 10px 15px;
+        margin-top: 10px;
+    }
+
+    .sb-sidenav-dark .nav-link {
+        color: #f2f2f7; /* White text for links */
+        padding: 10px 15px;
+        margin: 5px 10px;
+        border-radius: 8px; /* Rounded corners */
+        transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .sb-sidenav-dark .nav-link .sb-nav-link-icon {
+        color: rgba(242, 242, 247, 0.6); /* Slightly less opaque white for icons */
+        transition: color 0.2s ease;
+    }
+
+    .sb-sidenav-dark .nav-link:hover {
+        background-color: rgba(242, 242, 247, 0.1); /* Semi-transparent white background on hover */
+        color: #f2f2f7; /* White text on hover */
+    }
+
+    .sb-sidenav-dark .nav-link:hover .sb-nav-link-icon {
+         color: #f2f2f7; /* White icon on hover */
+    }
+
+
+    .sb-sidenav-dark .nav-link.collapsed {
+         color: #f2f2f7; /* White text for collapsed links */
+    }
+
+     .sb-sidenav-dark .nav-link.active {
+        color: #007aff; /* Apple blue for active link (stands out against white) */
+     }
+
+    .sb-sidenav-dark .sb-sidenav-collapse-arrow {
+        color: rgba(242, 242, 247, 0.6); /* Slightly less opaque white for arrows */
+    }
+
+    .sb-sidenav-dark .sb-sidenav-menu-nested .nav-link {
+        padding: 8px 15px 8px 30px; /* Adjust padding for nested links */
+        color: #f2f2f7; /* White text for nested links */
+    }
+
+    .sb-sidenav-dark .sb-sidenav-menu-nested .nav-link:hover {
+         background-color: rgba(242, 242, 247, 0.1); /* Semi-transparent white background on hover for nested links */
+         color: #f2f2f7; /* White text on hover for nested links */
+    }
+
+    .sb-sidenav-dark .sb-sidenav-footer {
+        background-color: rgba(50, 50, 52, 0.8); /* Slightly darker semi-transparent footer background */
+        color: #f2f2f7; /* White text */
+        padding: 15px;
+        border-top: 1px solid rgba(70, 70, 72, 0.8); /* Semi-transparent border top */
+    }
+
+     .sb-sidenav-dark .sb-sidenav-footer .small {
+        color: rgba(242, 242, 247, 0.6); /* Slightly less opaque white for "Logged in as" */
+     }
+
+     /* Ensure all text within the sidebar is white */
+     .sb-sidenav-dark * {
+         color: inherit !important; /* Inherit color from parent (should be white) */
+     }
+
+     .sb-sidenav-dark .nav-link.active {
+         color: #007aff !important; /* Keep active link blue */
+     }
+
+
+</style>
