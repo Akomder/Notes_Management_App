@@ -7,6 +7,7 @@
 <style>
     /* Styles for the header to look like the left sidebar */
     .sb-topnav {
+<<<<<<< HEAD
         background-color: rgba(28, 28, 30, 0.8) !important;
         /* Semi-transparent dark background */
         color: #f2f2f7 !important;
@@ -30,12 +31,28 @@
     .sb-topnav .navbar-brand {
         color: #f2f2f7 !important;
         /* White color for the brand text */
+=======
+        background-color: rgba(28, 28, 30, 0.8) !important; /* Semi-transparent dark background */
+        color: #f2f2f7 !important; /* Light text */
+        backdrop-filter: blur(10px); /* Apply blur effect */
+        -webkit-backdrop-filter: blur(10px); /* Safari support */
+        transition: background-color 0.4s ease, color 0.4s ease, backdrop-filter 0.4s ease; /* Fluid transition */
+        padding: 0 15px; /* Adjust padding as needed */
+        min-height: 56px; /* Ensure a minimum height */
+        display: flex; /* Use flexbox for alignment */
+        align-items: center; /* Vertically align items */
+    }
+
+    .sb-topnav .navbar-brand {
+        color: #f2f2f7 !important; /* White color for the brand text */
+>>>>>>> 750112553fa5a49fe9e63471fd63728494de956c
         font-weight: 600;
         padding-top: 0;
         padding-bottom: 0;
         transition: color 0.2s ease;
     }
 
+<<<<<<< HEAD
     .sb-topnav .navbar-brand:hover {
         color: rgba(242, 242, 247, 0.8) !important;
         /* Subtle hover effect */
@@ -45,13 +62,27 @@
     .sb-topnav .btn-link {
         color: #f2f2f7 !important;
         /* White color for the toggle button icon */
+=======
+     .sb-topnav .navbar-brand:hover {
+         color: rgba(242, 242, 247, 0.8) !important; /* Subtle hover effect */
+     }
+
+
+    .sb-topnav .btn-link {
+        color: #f2f2f7 !important; /* White color for the toggle button icon */
+>>>>>>> 750112553fa5a49fe9e63471fd63728494de956c
         transition: color 0.2s ease, opacity 0.2s ease;
     }
 
     .sb-topnav .btn-link:hover {
+<<<<<<< HEAD
         color: rgba(242, 242, 247, 0.8) !important;
         /* Subtle hover effect */
         opacity: 0.9;
+=======
+         color: rgba(242, 242, 247, 0.8) !important; /* Subtle hover effect */
+         opacity: 0.9;
+>>>>>>> 750112553fa5a49fe9e63471fd63728494de956c
     }
 
     /* Ensure all text within the header is white by default */
@@ -59,6 +90,7 @@
         color: inherit !important;
     }
 
+<<<<<<< HEAD
     /* Adjust logo styling if necessary to fit the new header look */
     .sb-topnav .navbar-brand img {
         filter: brightness(0) invert(1);
@@ -80,4 +112,25 @@
         filter: brightness(1) invert(0);
         /* Revert image color in dark mode if needed, or keep white */
     }
+=======
+     /* Adjust logo styling if necessary to fit the new header look */
+     .sb-topnav .navbar-brand img {
+         filter: brightness(0) invert(1); /* Make image white */
+         height: 30px; /* Maintain height */
+         transition: filter 0.4s ease;
+     }
+
+      body.dark-mode .sb-topnav {
+           background-color: rgba(28, 28, 30, 0.8) !important; /* Maintain dark background in dark mode */
+           color: #f2f2f7 !important;
+           backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+      }
+
+      body.dark-mode .sb-topnav .navbar-brand img {
+           filter: brightness(1) invert(0); /* Revert image color in dark mode if needed, or keep white */
+      }
+
+
+>>>>>>> 750112553fa5a49fe9e63471fd63728494de956c
 </style>

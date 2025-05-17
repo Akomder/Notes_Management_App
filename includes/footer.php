@@ -7,6 +7,7 @@
 </div>
 
 <style>
+<<<<<<< HEAD
     .glass-footer {
         background: rgba(255, 255, 255, 0.2);
         /* brighter frosted glass */
@@ -24,3 +25,20 @@
         font-weight: 500;
     }
 </style>
+=======
+.glass-footer {
+    background: rgba(255, 255, 255, 0.2); /* brighter frosted glass */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 1rem 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.4);
+    position: relative;
+    z-index: 10;
+}
+
+.footer-text {
+    color: rgba(0, 0, 0, 0.8); /* darker text for visibility */
+    font-weight: 500;
+}
+</style>
+>>>>>>> 750112553fa5a49fe9e63471fd63728494de956c
